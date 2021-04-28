@@ -1,0 +1,16 @@
+FROM node:alpine
+
+## Install build toolchain, install node deps and compile native add-ons
+RUN apk add --no-cache python3 make nasm autoconf automake libtool dpkg pkgconfig libpng libpng-dev g++
+RUN npm install -g gatsby-cli
+
+WORKDIR /app
+
+# COPY the package.json file, update any deps and install them with yarn
+COPY package.json .
+RUN yarn install && yarn cache clean
+
+# copy the whole source
+COPY . .
+
+CMD ["yarn", "develop", "-H", "0.0.0.0"]
